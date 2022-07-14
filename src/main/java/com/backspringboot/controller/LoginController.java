@@ -1,28 +1,31 @@
 package com.backspringboot.controller;
 
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.net.http.HttpRequest;
+import java.util.Map;
 
 @RestController
+
 @RequestMapping("/user")
-public class LoginController {
+public class LoginController  {
     @PostMapping("/login")
-    public String login(HttpServletRequest req,Model model, HttpSession session){
+    @CrossOrigin(origins = "http://localhost:3000") //인터셉터 적용안되서 임시로 추가
+    public Object login(@RequestBody Map<String, Object> param,HttpSession session){
         System.out.println("user/domain");
-        String email = req.getParameter("email");
+        String email = param.get("email").toString();
+        System.out.println("param : "+param);
         System.out.println("email : "+email);
-        return email;
+        session.setAttribute("memVo",param);
+        return param;
     }
-    @RequestMapping("/login")
-    public String getLogin(HttpServletRequest req,Model model, HttpSession session){
-        System.out.println("user/domain");
-        String email = req.getParameter("email");
-        System.out.println("email : "+email);
-        return email;
+    @PostMapping("/{user}")
+    public Object getUser(@RequestBody Map<String, Object> param,HttpSession session){
+        System.out.println("session : "+ session.getAttribute("memVo"));
+        return session.getAttribute("memVo");
     }
+
 }
